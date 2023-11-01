@@ -3,32 +3,25 @@ document.addEventListener("DOMContentLoaded", function () {
     const addButton = document.getElementById("add-button");
     const taskList = document.getElementById("taskList");
     const completedList = document.getElementById("completedList");
+    const syncButton = document.getElementById("sync-button");
 
     // Load tasks from localStorage on page load
     loadTasks(taskList, completedList);
 
     addButton.addEventListener("click", function () {
         addTask(taskInput, taskList, completedList);
+        syncTasksToGitHub();
     });
 
     taskInput.addEventListener("keypress", function (e) {
         if (e.key === "Enter") {
             addTask(taskInput, taskList, completedList);
+            syncTasksToGitHub();
         }
     });
 
-    // Add event listener to a common parent element (taskList and completedList)
-    const listsContainer = document.querySelector(".columns");
-    listsContainer.addEventListener("click", function (e) {
-        if (e.target.className === "remove-button") {
-            removeTask(e.target, taskList, completedList);
-        }
-        if (e.target.type === "checkbox") {
-            moveTask(e.target, taskList, completedList);
-        }
-
-        // Save tasks to localStorage when any action is performed
-        saveTasks(taskList, completedList);
+    syncButton.addEventListener("click", function () {
+        syncTasksFromGitHub(taskList, completedList);
     });
 });
 
@@ -70,6 +63,9 @@ function addTask(taskInput, taskList, completedList) {
     if (taskText) {
         createTaskElement(taskList, taskText);
         taskInput.value = "";
+
+        // Save tasks to localStorage when adding a task
+        saveTasks(taskList, completedList);
     }
 }
 
@@ -80,6 +76,9 @@ function removeTask(button, taskList, completedList) {
     } else if (completedList.contains(taskItem)) {
         completedList.removeChild(taskItem);
     }
+
+    // Save tasks to localStorage after removing a task
+    saveTasks(taskList, completedList);
 }
 
 function moveTask(checkbox, taskList, completedList) {
@@ -89,4 +88,70 @@ function moveTask(checkbox, taskList, completedList) {
     } else {
         taskList.appendChild(taskItem);
     }
+
+    // Save tasks to localStorage after moving a task
+    saveTasks(taskList, completedList);
+}
+
+function syncTasksToGitHub() {
+    const toDoTasks = Array.from(taskList.querySelectorAll("li span")).map((span) => span.textContent);
+    const completedTasks = Array.from(completedList.querySelectorAll("li span")).map((span) => span.textContent);
+    const storedTasks = { toDo: toDoTasks, completed: completedTasks };
+
+    const token = "YOUR_GITHUB_TOKEN"; // Replace with your GitHub personal access token
+    const username = "YOUR_GITHUB_USERNAME"; // Replace with your GitHub username
+    const repoName = "YOUR_REPO_NAME"; // Replace with your GitHub repository name
+    const filePath = "tasks.json"; // Replace with the path to your tasks file in the repository
+
+    const content = JSON.stringify(storedTasks);
+
+    fetch(`https://api.github.com/repos/${username}/${repoName}/contents/${filePath}`, {
+        method: "GET",
+        headers: {
+            Authorization: `token ${token}`,
+        },
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            const sha = data.sha;
+
+            fetch(`https://api.github.com/repos/${username}/${repoName}/contents/${filePath}`, {
+                method: "PUT",
+                headers: {
+                    Authorization: `token ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    message: "Update tasks",
+                    sha: sha,
+                    content: btoa(content),
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => console.log("Tasks synchronized with GitHub"))
+                .catch((error) => console.error("Error synchronizing with GitHub: " + error));
+        })
+        .catch((error) => console.error("Error accessing GitHub: " + error));
+}
+
+function syncTasksFromGitHub(taskList, completedList) {
+    const token = "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"; // Replace with your GitHub personal access token
+    const username = "Arrieeee"; // Replace with your GitHub username
+    const repoName = "arrieee.github.io"; // Replace with your GitHub repository name
+    const filePath = "tasks.json"; // Replace with the path to your tasks file in the repository
+
+    fetch(`https://api.github.com/repos/${username}/${repoName}/contents/${filePath}`, {
+        method: "GET",
+        headers: {
+            Authorization: `token ${token}`,
+        },
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            const content = JSON.parse(atob(data.content));
+
+            loadTasks(taskList, completedList);
+            console.log("Tasks synchronized from GitHub");
+        })
+        .catch((error) => console.error("Error accessing GitHub: " + error));
 }
