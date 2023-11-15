@@ -1,31 +1,197 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Danielle & Arno's</h1>
-        <h2>To-Do List</h2>
-        <div class="input-container">
-            <input type="text" id="task" placeholder="Add a task">
-            <button id="add-button">Add</button>
-        </div>
-        <div class="columns">
-            <div class="column left">
-                <h2>Things-Do</h2>
-                <ul id="taskList"></ul>
+<html>
+    <head>
+        <title>Guess Who!</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            /* General Styles */
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background-color: #f5f5f5;
+            }
+
+            h1 {
+                text-align: center;
+            }
+
+            /* Image Styles */
+            .image-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+                padding: 10px;
+                max-width: 100%;
+                margin: 0 auto;
+            }
+
+            .image-row {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            img {
+                max-width: 100px;
+                height: auto;
+                cursor: pointer;
+                margin: 5px;
+                border-radius: 5px;
+                transition: transform 0.2s ease-in-out;
+                position: relative;
+            }
+
+            img:hover {
+                transform: scale(1.1);
+            }
+
+            .selected-image img {
+                position: absolute;
+                top: 0;
+                left: 150px; 
+            }
+
+            .crossed-out {
+                filter: grayscale(90%);
+                opacity: 0.5;
+            }
+
+            /* Button Styles */
+            .select-button {
+                padding: 10px 20px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                margin-top: 20px;
+            }
+
+            .select-button:hover {
+                background-color: #45a049;
+            }
+
+            .label {
+                position: absolute;
+                top: 0%;
+                left: 0%;
+                font-size: 16px;
+                color: #888;
+            }
+
+            /* Media Queries */
+            @media screen and (max-width: 768px) {
+                img {
+                    max-width: 80px;
+                }
+
+                .image-row {
+                    justify-content: space-around;
+                }
+            }
+
+            @media screen and (max-width: 480px) {
+                img {
+                    max-width: 60px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Guess Who!</h1>
+
+        <div class="image-container">
+            <div class="image-row">
+                <img src="Characters/1.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/2.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/3.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/4.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/5.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/6.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/7.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/8.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
             </div>
-            <div class="column right">
-                <h2>Already Completed</h2>
-                <ul id="completedList"></ul>
+            <div class="image-row">
+                <img src="Characters/9.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/10.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/11.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/12.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/13.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/14.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/15.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/16.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+            </div>
+            <div class="image-row">
+                <img src="Characters/17.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/18.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/19.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/20.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/21.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/22.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/23.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
+                <img src="Characters/24.png" onclick="toggleCrossOut(this); updateLastClickedImage(this);" ondblclick="doubleClickAction(this)">
             </div>
         </div>
-        <button id="sync-button">Sync</button>
-    </div>
-    <script src="script.js"></script>
-</body>
+
+        <div style="text-align: center;">
+            <button class="select-button" onclick="toggleLastClicked(); doubleClickAction(lastClickedImage);">Select Character</button>
+        </div>
+
+        <div class="label">
+            Arno &amp; Danielle <span style="color: red;">&hearts;</span>
+        </div>
+
+        <script>
+            let lastClickedImage = null;
+
+            if (/iPhone|iPad|Android/i.test(navigator.userAgent)){
+                left = "42%";
+                top = "50";
+            } else {
+                left = "47.2%";
+                top = "80%";
+            }
+
+            function toggleCrossOut(image) {
+                if (image.classList.contains("crossed-out")) {
+                    image.classList.remove("crossed-out");
+                } else {
+                    image.classList.add("crossed-out");
+                }
+            }
+        
+            function doubleClickAction(image) {
+                if (image) {
+                    bottom = 0;
+                    right = 0;
+
+                    const cloneImage = image.cloneNode(true);
+                    cloneImage.classList.remove("crossed-out");
+                    cloneImage.style.position = "absolute";
+                    cloneImage.style.left = left;
+                    cloneImage.style.top = top;
+                    document.body.appendChild(cloneImage);
+                } else {
+                    alert("Please double-click an image to select!");
+                }
+            }
+        
+            function updateLastClickedImage(image) {
+                lastClickedImage = image;
+            }
+        
+            function toggleLastClicked() {
+                if (lastClickedImage) {
+                    toggleCrossOut(lastClickedImage);
+                } else {
+                    alert("Please click an image to select!");
+                }
+            }
+        </script>
+    </body>
 </html>
